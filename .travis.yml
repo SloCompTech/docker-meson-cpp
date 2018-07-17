@@ -62,16 +62,25 @@ after_success:
     fi
 
     # Authenticate with docker
-    echo "$DOCKER_PASSWORD" | ${SUDO_CMD} docker login -u "$DOCKER_USERNAME" --password-stdin;
+    if [[ $DOCKER_USERNAME != "" ]] && [[ $DOCKER_PASSWORD != "" ]]; then
+      echo "$DOCKER_PASSWORD" | ${SUDO_CMD} docker login -u "$DOCKER_USERNAME" --password-stdin;
 
-    # Push images
-    if [[ $IMG_TAG != "" ]]; then
-      ${SUDO_CMD} docker tag ${IMG_NAME} ${IMG_NAME}:${IMG_TAG};
-      ${SUDO_CMD} docker push ${IMG_NAME}:${IMG_TAG};
-    fi
-    if [[ $IMG_TAGL != "" ]]; then
-      ${SUDO_CMD} docker tag ${IMG_NAME} ${IMG_NAME}:${IMG_TAGL};
-      ${SUDO_CMD} docker push ${IMG_NAME}:${IMG_TAGL};
+      if [ $? -ne 0 ]; then
+        echo 'Failed to login into dockerhub';
+        exit 0;
+      fi
+      # Push images
+      if [[ $IMG_TAG != "" ]]; then
+        ${SUDO_CMD} docker tag ${IMG_NAME} ${IMG_NAME}:${IMG_TAG};
+        ${SUDO_CMD} docker push ${IMG_NAME}:${IMG_TAG};
+      fi
+      if [[ $IMG_TAGL != "" ]]; then
+        ${SUDO_CMD} docker tag ${IMG_NAME} ${IMG_NAME}:${IMG_TAGL};
+        ${SUDO_CMD} docker push ${IMG_NAME}:${IMG_TAGL};
+      fi
+      echo 'Pushed to dockerhub';
+    else
+      echo 'No credentials to login in dockerhub';
     fi
   fi
 
