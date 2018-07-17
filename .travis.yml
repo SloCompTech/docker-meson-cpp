@@ -21,9 +21,9 @@ before_script:
 - export IMG_BRANCH="${TRAVIS_BRANCH}"
 
 # Print info
-- echo "Dockerfile\:\ ${DOCKER_FILE}"
-- echo "Name\:\ ${IMG_NAME}"
-- echo "Branch\:\ ${IMG_BRANCH}"
+- echo "Dockerfile ${DOCKER_FILE}"
+- echo "Name ${IMG_NAME}"
+- echo "Branch ${IMG_BRANCH}"
 
 # Build docker
 - ${SUDO_CMD} docker build -t ${IMG_NAME} -f ${DOCKER_FILE} .
