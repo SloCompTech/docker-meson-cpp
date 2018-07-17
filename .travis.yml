@@ -16,7 +16,7 @@ env:
 
 # Add other enviroment variables via bash
 before_script:
-- export IMG_NAME="$(echo \"${TRAVIS_REPO_SLUG}\" | tr '[:upper:]' '[:lower:]')"
+- export IMG_NAME="$(echo ${TRAVIS_REPO_SLUG} | tr '[:upper:]' '[:lower:]')"
 - export IMG_VERSION="$(cat ${DOCKER_FILE} | grep -Po '(?<=VERSION=\")(.+)(?=\")')"
 - export IMG_BRANCH="${TRAVIS_BRANCH}"
 
