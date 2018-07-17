@@ -5,7 +5,7 @@ jobs:
   include:
     - stage: build docker image
       script:
-      - if [ "${TRAVIS_TAG}" != "" ]; DADDITIONAL="-t ${TRAVIS_REPO_SLUG}:${TRAVIS_TAG} "; fi
+      - if [ "${TRAVIS_TAG}" != "" ]; then DADDITIONAL="-t ${TRAVIS_REPO_SLUG}:${TRAVIS_TAG} "; fi
       #- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - docker build -t ${TRAVIS_REPO_SLUG}:latest ${DADDITIONAL}.
       - docker images
