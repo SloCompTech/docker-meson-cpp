@@ -29,9 +29,11 @@ script:
 
 # Deploy images to dockerhub
 after_success:
-- if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then # Check if it is not PULL REQUEST
+- >
+  # Check if it is not PULL REQUEST
+  if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then
     # Generate tags for images
-    IMG_TAG_SUFFIX="";
+    IMG_TAG_SUFFIX=""; 
     IMG_TAGL_SUFFIX="";
     
     if [[ $USE_IMG_VER == "true" ]] && [[ $IMG_VERSION != "" ]]; then
@@ -50,7 +52,7 @@ after_success:
     fi
 
     # Don't use same tag twice (case when no version)
-    if [[ $IMG_TAG == $IMG_TAGL ]]; then
+    if [[ $IMG_TAG == $IMG_TAGL ]]; then 
       IMG_TAG="";
     fi
 
