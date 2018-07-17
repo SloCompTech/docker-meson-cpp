@@ -1,5 +1,7 @@
 # docker-meson-cpp
 
+![Travis CI status](https://travis-ci.org/SloCompTech/docker-meson-cpp.svg?branch=master)
+
 ## What is it ?
 
 It is simple docker which enables you to compile **c++** code with **meson build**. It includes:
