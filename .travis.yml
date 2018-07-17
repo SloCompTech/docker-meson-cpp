@@ -18,10 +18,14 @@ before_script:
 - export IMG_NAME="${TRAVIS_REPO_SLUG}"
 - export IMG_VERSION='$(cat ${DOCKER_FILE} | grep -Po \'(?<=VERSION=")(.+)(?=")\')'
 - export IMG_BRANCH="${TRAVIS_BRANCH}"
+# Print info
+- echo "Dockerfile\:\ ${DOCKER_FILE}"
+- echo "Name\:\ ${IMG_NAME}"
+- echo "Branch\:\ ${IMG_BRANCH}"
 
 # Build docker
 before_script:
-- docker build -t ${IMG_NAME} -f $DOCKER_FILE .
+- docker build -t ${IMG_NAME} -f ${DOCKER_FILE} .
 
 # Docker tests
 script:
