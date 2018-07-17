@@ -10,5 +10,5 @@ LABEL maintainer="Martin Dagarin <martin.dagarin@gmail.com>" version=${VERSION}
 SHELL ["/bin/bash","-c"]
 
 # Get updates install dependencies
-RUN apt-get update && apt-get install git make g++ ninja-build -y && apt-get clean && rm -rf /var/lib/apt/list/* && \
+RUN apt-get update && apt-get install git make g++ ninja-build build-essential pkg-config gdb valgrind -y && apt-get clean && rm -rf /var/lib/apt/list/* && \
     pip install meson
