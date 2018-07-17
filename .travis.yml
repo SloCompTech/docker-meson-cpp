@@ -31,40 +31,40 @@ script:
 after_success:
 - if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then # Check if it is not PULL REQUEST
     # Generate tags for images
-    IMG_TAG_SUFFIX=""
-    IMG_TAGL_SUFFIX=""
+    IMG_TAG_SUFFIX="";
+    IMG_TAGL_SUFFIX="";
     
     if [[ $USE_IMG_VER == "true" ]] && [[ $IMG_VERSION != "" ]]; then
       if [[ $IMG_BRANCH != "master" ]]; then
-        IMG_TAG_SEP="-"
+        IMG_TAG_SEP="-";
       fi
-      IMG_TAG_SUFFIX="${IMG_TAG_SEP}${IMG_VERSION}"
-      IMG_TAGL_SUFFIX="${IMG_TAG_SEP}latest"
+      IMG_TAG_SUFFIX="${IMG_TAG_SEP}${IMG_VERSION}";
+      IMG_TAGL_SUFFIX="${IMG_TAG_SEP}latest";
     fi
     if [[ $IMG_BRANCH != "master" ]]; then
-      IMG_TAG="${IMG_BRANCH}${IMG_TAG_SUFFIX}"
-      IMG_TAGL="${IMG_BRANCH}${IMG_TAGL_SUFFIX}"
+      IMG_TAG="${IMG_BRANCH}${IMG_TAG_SUFFIX}";
+      IMG_TAGL="${IMG_BRANCH}${IMG_TAGL_SUFFIX}";
     else
-      IMG_TAG="${IMG_TAG_SUFFIX}"
-      IMG_TAGL="latest"
+      IMG_TAG="${IMG_TAG_SUFFIX}";
+      IMG_TAGL="latest";
     fi
 
     # Don't use same tag twice (case when no version)
     if [[ $IMG_TAG == $IMG_TAGL ]]; then
-      IMG_TAG=""
+      IMG_TAG="";
     fi
 
     # Authenticate with docker
-    echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin;
 
     # Push images
     if [[ $IMG_TAG != "" ]]; then
-      docker tag ${IMG_NAME} ${IMG_NAME}:${IMG_TAG}
-      docker push ${IMG_NAME}:${IMG_TAG}
+      docker tag ${IMG_NAME} ${IMG_NAME}:${IMG_TAG};
+      docker push ${IMG_NAME}:${IMG_TAG};
     fi
     if [[ $IMG_TAGL != "" ]]; then
-      docker tag ${IMG_NAME} ${IMG_NAME}:${IMG_TAGL}
-      docker push ${IMG_NAME}:${IMG_TAGL}
+      docker tag ${IMG_NAME} ${IMG_NAME}:${IMG_TAGL};
+      docker push ${IMG_NAME}:${IMG_TAGL};
     fi
   fi
 
