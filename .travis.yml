@@ -29,8 +29,7 @@ script:
 
 # Deploy images to dockerhub
 after_success:
-- # Check if it is not PULL REQUEST
-  if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then
+- if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then # Check if it is not PULL REQUEST
     # Generate tags for images
     IMG_TAG_SUFFIX=""
     IMG_TAGL_SUFFIX=""
