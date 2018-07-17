@@ -1,16 +1,71 @@
 sudo: true
 dist: trusty
 
-jobs:
-  include:
-    - stage: build docker image
-      script:
-      - if [ "${TRAVIS_TAG}" != "" ]; then DADDITIONAL="-t ${TRAVIS_REPO_SLUG}:${TRAVIS_TAG} "; fi
-      #- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker build -t ${TRAVIS_REPO_SLUG}:latest ${DADDITIONAL}.
-      - docker images
-      #- docker push ${TRAVIS_REPO_SLUG}
-    - stage: test
-      script: echo "hello"
-    #  script: docker run --rm ${TRAVIS_REPO_SLUG} cat hello.txt
-    #- script: docker run --rm ${TRAVIS_REPO_SLUG} cat hello.txt
+services:
+  - docker
+
+env:
+  global:
+    - DOCKER_FILE=Dockerfile
+    - USE_IMG_VER=true
+    # - COMMIT=${TRAVIS_COMMIT::8}
+    # - CGO_ENABLED=0
+    # - GOOS=linux
+    # - GOARCH=amd64
+
+# Add other enviroment variables via bash
+before_script:
+- export IMG_NAME="${TRAVIS_REPO_SLUG}"
+- export IMG_VERSION='$(cat ${DOCKER_FILE} | grep -Po \'(?<=VERSION=")(.+)(?=")\')'
+- export IMG_BRANCH="${TRAVIS_BRANCH}"
+
+# Build docker
+before_script:
+- docker build -t ${IMG_NAME} -f $DOCKER_FILE .
+
+# Docker tests
+script:
+- echo "Currenty not test is available"
+
+# Deploy images to dockerhub
+after_success:
+- # Check if it is not PULL REQUEST
+  if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then
+    # Generate tags for images
+    IMG_TAG_SUFFIX=""
+    IMG_TAGL_SUFFIX=""
+    
+    if [[ $USE_IMG_VER == "true" ]] && [[ $IMG_VERSION != "" ]]; then
+      if [[ $IMG_BRANCH != "master" ]]; then
+        IMG_TAG_SEP="-"
+      fi
+      IMG_TAG_SUFFIX="${IMG_TAG_SEP}${IMG_VERSION}"
+      IMG_TAGL_SUFFIX="${IMG_TAG_SEP}latest"
+    fi
+    if [[ $IMG_BRANCH != "master" ]]; then
+      IMG_TAG="${IMG_BRANCH}${IMG_TAG_SUFFIX}"
+      IMG_TAGL="${IMG_BRANCH}${IMG_TAGL_SUFFIX}"
+    else
+      IMG_TAG="${IMG_TAG_SUFFIX}"
+      IMG_TAGL="latest"
+    fi
+
+    # Don't use same tag twice (case when no version)
+    if [[ $IMG_TAG == $IMG_TAGL ]]; then
+      IMG_TAG=""
+    fi
+
+    # Authenticate with docker
+    echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+    # Push images
+    if [[ $IMG_TAG != "" ]]; then
+      docker tag ${IMG_NAME} ${IMG_NAME}:${IMG_TAG}
+      docker push ${IMG_NAME}:${IMG_TAG}
+    fi
+    if [[ $IMG_TAGL != "" ]]; then
+      docker tag ${IMG_NAME} ${IMG_NAME}:${IMG_TAGL}
+      docker push ${IMG_NAME}:${IMG_TAGL}
+    fi
+  fi
+
