@@ -4,82 +4,15 @@ dist: trusty
 services:
   - docker
 
-env:
-  global:
-    - DOCKER_FILE=Dockerfile
-    - USE_IMG_VER=true
-    - SUDO_CMD=sudo
-    # - COMMIT=${TRAVIS_COMMIT::8}
-    # - CGO_ENABLED=0
-    # - GOOS=linux
-    # - GOARCH=amd64
-
 # Add other enviroment variables via bash
 before_script:
 - export IMG_NAME="$(echo ${TRAVIS_REPO_SLUG} | tr '[:upper:]' '[:lower:]')"
-- export IMG_VERSION="$(cat ${DOCKER_FILE} | grep -Po '(?<=VERSION=\")(.+)(?=\")')"
 - export IMG_BRANCH="${TRAVIS_BRANCH}"
 
-# Print info
-- echo "Dockerfile ${DOCKER_FILE}"
-- echo "Name ${IMG_NAME}"
-- echo "Branch ${IMG_BRANCH}"
-
 # Build docker
-- ${SUDO_CMD} docker build -t ${IMG_NAME} -f ${DOCKER_FILE} .
+- sudo docker build -t ${IMG_NAME} .
 
 # Docker tests
 script:
 - echo "Currenty not test is available"
-
-# Deploy images to dockerhub
-after_success:
-- | # Check if it is not PULL REQUEST
-    if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then
-        # Generate tags for images
-        IMG_TAG_SUFFIX=""; 
-        IMG_TAGL_SUFFIX="";
-
-        if [[ $USE_IMG_VER == "true" ]] && [[ $IMG_VERSION != "" ]]; then
-            if [[ $IMG_BRANCH != "master" ]]; then
-                IMG_TAG_SEP="-";
-            fi
-            IMG_TAG_SUFFIX="${IMG_TAG_SEP}${IMG_VERSION}";
-            IMG_TAGL_SUFFIX="${IMG_TAG_SEP}latest";
-        fi
-        if [[ $IMG_BRANCH != "master" ]]; then
-            IMG_TAG="${IMG_BRANCH}${IMG_TAG_SUFFIX}";
-            IMG_TAGL="${IMG_BRANCH}${IMG_TAGL_SUFFIX}";
-        else
-            IMG_TAG="${IMG_TAG_SUFFIX}";
-            IMG_TAGL="latest";
-        fi
-
-        # Don't use same tag twice (case when no version)
-        if [[ $IMG_TAG == $IMG_TAGL ]]; then 
-            IMG_TAG="";
-        fi
-
-        # Authenticate with docker          
-        if [[ $DOCKER_USERNAME != "" ]] && [[ $DOCKER_PASSWORD != "" ]]; then
-            echo "$DOCKER_PASSWORD" | ${SUDO_CMD} docker login -u "$DOCKER_USERNAME" --password-stdin;
-
-            if [ $? -ne 0 ]; then
-                echo 'Failed to login into dockerhub';
-                exit 0;
-            fi
-            # Push images
-            if [[ $IMG_TAG != "" ]]; then
-                ${SUDO_CMD} docker tag ${IMG_NAME} ${IMG_NAME}:${IMG_TAG};
-                ${SUDO_CMD} docker push ${IMG_NAME}:${IMG_TAG};
-            fi
-            if [[ $IMG_TAGL != "" ]]; then
-                ${SUDO_CMD} docker tag ${IMG_NAME} ${IMG_NAME}:${IMG_TAGL};
-                ${SUDO_CMD} docker push ${IMG_NAME}:${IMG_TAGL};
-            fi
-            echo 'Pushed to dockerhub';
-        else
-            echo 'No credentials to login in dockerhub';
-        fi
-    fi
 
