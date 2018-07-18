@@ -15,4 +15,3 @@ before_script:
 # Docker tests
 script:
 - echo "Currenty not test is available"
-

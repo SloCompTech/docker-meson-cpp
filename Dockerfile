@@ -1,11 +1,5 @@
 FROM python:3-slim-stretch
 
-# Version of docker
-ARG VERSION="1"
-
-# Add properties to container
-LABEL maintainer="Martin Dagarin <martin.dagarin@gmail.com>" version=${VERSION}
-
 # Shell
 SHELL ["/bin/bash","-c"]
 
