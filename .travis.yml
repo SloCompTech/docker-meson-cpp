@@ -1,3 +1,10 @@
+#
+#   Travis CI - Docker build & test script
+#   
+#   By: Martin Dagarin
+#   Version: 1
+#
+
 sudo: true
 dist: trusty
 
